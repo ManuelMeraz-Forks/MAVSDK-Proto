@@ -9,70 +9,35 @@ option java_outer_classname = "ComponentInformationServerProto";
 
 // Provide information about the hardware and/or software of a system.
 service InfoServerService {
-    // Provide flight information of the system.
-    rpc ProvideFlightInformation(ProvideFlightInformationRequest) returns(ProvideFlightInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
-    // Provide the identification of the system.
-    rpc ProvideIdentification(ProvideIdentificationRequest) returns(ProvideIdentificationResponse) { option (mavsdk.options.async_type) = SYNC; }
-    // Provide product information of the system.
-    rpc ProvideProduct(ProvideProductRequest) returns(ProvideProductResponse) { option (mavsdk.options.async_type) = SYNC; }
-    // Provide the version information of the system.
-    rpc ProvideVersion(ProvideVersionRequest) returns(ProvideVersionResponse) { option (mavsdk.options.async_type) = SYNC; }
-    // Provide the speed factor of a simulation (with lockstep a simulation can run faster or slower than realtime).
-    rpc ProvideSpeedFactor(ProvideSpeedFactorRequest) returns(ProvideSpeedFactorResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Provide autopilot version of the system.
+    rpc ProvideAutopilotVersion(ProvideAutopilotVersionRequest) returns(ProvideAutopilotVersionResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Provide protocol version of the system.
+    rpc ProvideProtocolVersion(ProvideProtocolVersionRequest) returns(ProvideProtocolVersionResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
-message ProvideFlightInformationRequest {}
-message ProvideFlightInformationResponse {
+message ProvideProtocolVersionRequest {}
+message ProvideProtocolVersionResponse {
     InfoResult info_result = 1;
-    FlightInfo flight_info = 2; // Flight information of the system
+    ProtocolVersion protocol_version_info = 2; // Protocol version of the system
 }
 
-message ProvideIdentificationRequest {}
-message ProvideIdentificationResponse {
+message ProvideAutopilotVersionRequest {}
+message ProvideAutopilotVersionResponse {
     InfoResult info_result = 1;
-    Identification identification = 2; // Identification of the system
+    AutopilotVersion protocol_version_info = 2; // Protocol version of the system
 }
 
-message ProvideProductRequest {}
-message ProvideProductResponse {
-    InfoResult info_result = 1;
-    Product product = 2; // Product information of the system
+// Mavlink version information.
+message ProtocolVersion {
+	int32 version = 1 // Currently active MAVLink version number * 100: v1.0 is 100, v2.0 is 200, etc.
+	int32 min_version = 2 // Minimum MAVLink version supported
+	int32 max_version = 3 // Maximum MAVLink version supported (set to the same value as version by default)
+	string spec_version_hash = 4 // The first 8 bytes (not characters printed in hex!) of the git hash.
+	string library_version_hash = 5 // The first 8 bytes (not characters printed in hex!) of the git hash.
 }
 
-message ProvideVersionRequest {}
-message ProvideVersionResponse {
-    InfoResult info_result = 1;
-    Version version = 2; // Version information about the system
-}
-
-message ProvideSpeedFactorRequest {}
-message ProvideSpeedFactorResponse {
-    InfoResult info_result = 1;
-    double speed_factor = 2; // Speed factor of simulation
-}
-
-// System flight information.
-message FlightInfo {
-    uint32 time_boot_ms = 1; // Time since system boot
-    uint64 flight_uid = 2; // Flight counter. Starts from zero, is incremented at every disarm and is never reset (even after reboot)
-}
-
-// System identification.
-message Identification {
-    string hardware_uid = 1; // UID of the hardware. This refers to uid2 of MAVLink. If the system does not support uid2 yet, this is all zeros.
-    uint64 legacy_uid = 2; // Legacy UID of the hardware, referred to as uid in MAVLink (formerly exposed during system discovery as UUID).
-}
-
-// System product information.
-message Product {
-    int32 vendor_id = 1; // ID of the board vendor
-    string vendor_name = 2; // Name of the vendor
-    int32 product_id = 3; // ID of the product
-    string product_name = 4; // Name of the product
-}
-
-// System version information.
-message Version {
+// Autopilot version information.
+message AutopilotVersion {
     int32 flight_sw_major = 1; // Flight software major version
     int32 flight_sw_minor = 2; // Flight software minor version
     int32 flight_sw_patch = 3; // Flight software patch version
