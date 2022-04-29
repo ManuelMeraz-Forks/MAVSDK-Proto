@@ -13,6 +13,10 @@ service InfoServerService {
     rpc ProvideAutopilotVersion(ProvideAutopilotVersionRequest) returns(ProvideAutopilotVersionResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Provide protocol version of the system.
     rpc ProvideProtocolVersion(ProvideProtocolVersionRequest) returns(ProvideProtocolVersionResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Set autopilot version of the system.
+    rpc SetAutopilotVersion(SetAutopilotVersionRequest) returns(SetAutopilotVersionResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Set protocol version of the system.
+    rpc SetProtocolVersion(SetProtocolVersionRequest) returns(SetProtocolVersionResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message ProvideProtocolVersionRequest {}
@@ -24,32 +28,49 @@ message ProvideProtocolVersionResponse {
 message ProvideAutopilotVersionRequest {}
 message ProvideAutopilotVersionResponse {
     InfoResult info_result = 1;
-    AutopilotVersion protocol_version_info = 2; // Protocol version of the system
+    AutopilotVersion protocol_version_info = 2; // Autopilot version of the system
 }
+
+message SetAutopilotVersionRequest {
+    AutopilotVersion autopilot_version_info = 1; // Autopilot version of the system
+}
+
+message SetAutopilotVersionResponse {
+    InfoResult info_result = 1;
+}
+
+message SetProtocolVersionRequest {
+    ProtocolVersion protocol_version_info = 1; // Protocol version of the system
+}
+
+message SetProtocolVersionResponse {
+    InfoResult info_result = 1;
+}
+
 
 // Mavlink version information.
 message ProtocolVersion {
-	int32 version = 1; // Currently active MAVLink version number * 100: v1.0 is 100, v2.0 is 200, etc.
-	int32 min_version = 2; // Minimum MAVLink version supported
-	int32 max_version = 3; // Maximum MAVLink version supported (set to the same value as version by default)
+	uint32 version = 1; // Currently active MAVLink version number * 100: v1.0 is 100, v2.0 is 200, etc.
+	uint32 min_version = 2; // Minimum MAVLink version supported
+	uint32 max_version = 3; // Maximum MAVLink version supported (set to the same value as version by default)
 	string spec_version_hash = 4; // The first 8 bytes (not characters printed in hex!) of the git hash.
 	string library_version_hash = 5; // The first 8 bytes (not characters printed in hex!) of the git hash.
 }
 
 // Autopilot version information.
 message AutopilotVersion {
-    int64 capabilities = 1; // Bitmask of (optional) autopilot capabilities
-    int32 flight_sw_major = 2; // Flight software major version
-    int32 flight_sw_minor = 3; // Flight software minor version
-    int32 flight_sw_patch = 4; // Flight software patch version
-    int32 flight_sw_vendor_major = 5; // Flight software vendor major version
-    int32 flight_sw_vendor_minor = 6; // Flight software vendor minor version
-    int32 flight_sw_vendor_patch = 7; // Flight software vendor patch version
-    int32 os_sw_major = 8; // Operating system software major version
-    int32 os_sw_minor = 9; // Operating system software minor version
-    int32 os_sw_patch = 10; // Operating system software patch version
-    string flight_sw_git_hash = 11; // Flight software git hash
-    string os_sw_git_hash = 12; // Operating system software git hash
+    uint64 capabilities = 1; // MAV_PROTOCOL_CAPABILITYBitmap of capabilities
+	uint32 flight_sw_version = 2; // Firmware version number
+	uint32 middleware_sw_version = 3; // Middleware version number
+	uint32 os_sw_version = 4; // Operating system version number
+	uint32 board_version = 5; // HW / board version (last 8 bits should be silicon ID, if any). The first 16 bits of this field specify https://github.com/PX4/PX4-Bootloader/blob/master/board_types.txt
+	string flight_custom_version = 6; // Custom version field, commonly the first 8 bytes of the git hash. This is not an unique identifier, but should allow to identify the commit using the main version number even for very large code bases.
+	string middleware_custom_version = 7; // Custom version field, commonly the first 8 bytes of the git hash. This is not an unique identifier, but should allow to identify the commit using the main version number even for very large code bases.
+	string os_custom_version = 8; // Custom version field, commonly the first 8 bytes of the git hash. This is not an unique identifier, but should allow to identify the commit using the main version number even for very large code bases.
+	uint32 vendor_id = 9; // ID of the board vendor
+	uint32 product_id = 10; // ID of the product
+	uint64 uid = 11; // UID if provided by hardware (see uid2)
+	string uid2 = 12; // UID if provided by hardware (supersedes the uid field. If this is non-zero, use this field, otherwise use uid)	
 }
 
 // Result type.
