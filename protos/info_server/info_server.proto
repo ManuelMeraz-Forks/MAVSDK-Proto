@@ -38,17 +38,18 @@ message ProtocolVersion {
 
 // Autopilot version information.
 message AutopilotVersion {
-    int32 flight_sw_major = 1; // Flight software major version
-    int32 flight_sw_minor = 2; // Flight software minor version
-    int32 flight_sw_patch = 3; // Flight software patch version
-    int32 flight_sw_vendor_major = 4; // Flight software vendor major version
-    int32 flight_sw_vendor_minor = 5; // Flight software vendor minor version
-    int32 flight_sw_vendor_patch = 6; // Flight software vendor patch version
-    int32 os_sw_major = 7; // Operating system software major version
-    int32 os_sw_minor = 8; // Operating system software minor version
-    int32 os_sw_patch = 9; // Operating system software patch version
-    string flight_sw_git_hash = 10; // Flight software git hash
-    string os_sw_git_hash = 11; // Operating system software git hash
+    int64 capabilities = 1; // Bitmask of (optional) autopilot capabilities
+    int32 flight_sw_major = 2; // Flight software major version
+    int32 flight_sw_minor = 3; // Flight software minor version
+    int32 flight_sw_patch = 4; // Flight software patch version
+    int32 flight_sw_vendor_major = 5; // Flight software vendor major version
+    int32 flight_sw_vendor_minor = 6; // Flight software vendor minor version
+    int32 flight_sw_vendor_patch = 7; // Flight software vendor patch version
+    int32 os_sw_major = 8; // Operating system software major version
+    int32 os_sw_minor = 9; // Operating system software minor version
+    int32 os_sw_patch = 10; // Operating system software patch version
+    string flight_sw_git_hash = 11; // Flight software git hash
+    string os_sw_git_hash = 12; // Operating system software git hash
 }
 
 // Result type.
