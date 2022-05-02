@@ -13,10 +13,20 @@ service InfoServerService {
     rpc ProvideAutopilotVersion(ProvideAutopilotVersionRequest) returns(ProvideAutopilotVersionResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Provide protocol version of the system.
     rpc ProvideProtocolVersion(ProvideProtocolVersionRequest) returns(ProvideProtocolVersionResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Provide protocol version of the system.
+    rpc ProvideComponentInformation(ProvideComponentInformationRequest) returns(ProvideComponentInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Set autopilot version of the system.
     rpc SetAutopilotVersion(SetAutopilotVersionRequest) returns(SetAutopilotVersionResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Set protocol version of the system.
     rpc SetProtocolVersion(SetProtocolVersionRequest) returns(SetProtocolVersionResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Set protocol version of the system.
+    rpc SetComponentInformation(SetComponentInformationRequest) returns(SetComponentInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
+}
+
+message ProvideAutopilotVersionRequest {}
+message ProvideAutopilotVersionResponse {
+    InfoResult info_result = 1;
+    AutopilotVersion protocol_version_info = 2; // Autopilot version of the system
 }
 
 message ProvideProtocolVersionRequest {}
@@ -25,10 +35,10 @@ message ProvideProtocolVersionResponse {
     ProtocolVersion protocol_version_info = 2; // Protocol version of the system
 }
 
-message ProvideAutopilotVersionRequest {}
-message ProvideAutopilotVersionResponse {
+message ProvideComponentInformationRequest {}
+message ProvideComponentInformationResponse {
     InfoResult info_result = 1;
-    AutopilotVersion protocol_version_info = 2; // Autopilot version of the system
+    ComponentInformation component_information_info = 2; // Component information of the system
 }
 
 message SetAutopilotVersionRequest {
@@ -44,6 +54,14 @@ message SetProtocolVersionRequest {
 }
 
 message SetProtocolVersionResponse {
+    InfoResult info_result = 1;
+}
+
+message SetComponentInformationRequest {
+    ComponentInformation component_information_info = 1; // Component information of the system
+}
+
+message SetComponentInformationResponse {
     InfoResult info_result = 1;
 }
 
@@ -71,6 +89,15 @@ message AutopilotVersion {
 	uint32 product_id = 10; // ID of the product
 	uint64 uid = 11; // UID if provided by hardware (see uid2)
 	string uid2 = 12; // UID if provided by hardware (supersedes the uid field. If this is non-zero, use this field, otherwise use uid)	
+}
+
+// Component information.
+message ComponentInformation {
+	uint32 time_boot_ms = 1;	// ms	Timestamp (time since system boot).
+	uint32 general_metadata_file_crc = 2;	// CRC32 of the general metadata file (general_metadata_uri).
+	string general_metadata_uri = 3;	// MAVLink FTP URI for the general metadata file (COMP_METADATA_TYPE_GENERAL), which may be compressed with xz. The file contains general component metadata, and may contain URI links for additional metadata (see COMP_METADATA_TYPE). The information is static from boot, and may be generated at compile time. The string needs to be zero terminated.
+	uint32 peripherals_metadata_file_crc = 4;	// CRC32 of peripherals metadata file (peripherals_metadata_uri).
+	string peripherals_metadata_uri = 5;	// (Optional) MAVLink FTP URI for the peripherals metadata file (COMP_METADATA_TYPE_PERIPHERALS), which may be compressed with xz. This contains data about "attached components" such as UAVCAN nodes. The peripherals are in a separate file because the information must be generated dynamically at runtime. The string needs to be zero terminated.
 }
 
 // Result type.
