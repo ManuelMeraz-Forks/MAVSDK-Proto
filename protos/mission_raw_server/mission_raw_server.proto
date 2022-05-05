@@ -11,6 +11,12 @@ option java_outer_classname = "MissionRawServerProto";
 // Provides current mission item state, so the server can progress through missions.
 service MissionRawServerService {
     /*
+     *  Set Mission Type. Each Mission Raw Server will be responsible for either mission, geofence, or rally items.
+     *  Default is mission type.
+     */
+    rpc SetMissionType(SetMissionTypeRequest) returns(SetMissionTypeResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    /*
      * Subscribe to when a new mission is uploaded (asynchronous).
      */
     rpc SubscribeIncomingMission(SubscribeIncomingMissionRequest) returns(stream IncomingMissionResponse) {}
@@ -49,6 +55,11 @@ message ClearAllResponse {
 
 message SetCurrentItemCompleteRequest {}
 message SetCurrentItemCompleteResponse {}
+
+message SetMissionTypeRequest {
+    uint32 mission_type = 1;
+}
+message SetMissionTypeResponse {}
 
 // Mission item exactly identical to MAVLink MISSION_ITEM_INT.
 message MissionItem {
