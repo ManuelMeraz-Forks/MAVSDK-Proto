@@ -37,6 +37,16 @@ service ParamServerService {
      * Retrieve all parameters.
      */
     rpc RetrieveAllParams(RetrieveAllParamsRequest) returns(RetrieveAllParamsResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    /*
+     * Register callback to know when QGroundControl changed parameter
+     */
+    rpc SubscribeParamIntChanged(SubscribeParamIntChangedRequest) returns(stream SubscribeParamIntChangedResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    /*
+     * Register callback to know when QGroundControl changed parameter
+     */
+    rpc SubscribeParamFloatChanged(SubscribeParamFloatChangedRequest) returns(stream SubscribeParamFloatChangedResponse) { option (mavsdk.options.async_type) = ASYNC; }
 }
 
 message RetrieveParamIntRequest {
@@ -92,6 +102,16 @@ message IntParam {
 message FloatParam {
     string name = 1; // Name of the parameter
     float value = 2; // Value of the parameter
+}
+
+message SubscribeParamIntChangedRequest {}
+message SubscribeParamIntChangedResponse {
+    IntParam param = 1;
+}
+
+message SubscribeParamFloatChangedRequest {}
+message SubscribeParamFloatChangedResponse {
+    FloatParam param = 1;
 }
 
 /*
